@@ -1,108 +1,134 @@
 (function () {
   const amount = String(window.CHECKOUT_AMOUNT || "1.00");
-  const currency = window.CHECKOUT_CURRENCY || "USD";
-  const sdkUrl = window.PAYPAL_SDK_URL;
+  const currency = String(window.CHECKOUT_CURRENCY || "USD");
 
-  function byId(id) {
+  function el(id) {
     return document.getElementById(id);
   }
 
-  function formatAmount(value) {
-    const n = Number(value);
-    return "$" + n.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
-  }
-
   function showError(message) {
-    const box = byId("formError");
+    const box = el("formError");
     if (!box) return;
     box.textContent = message;
     box.classList.add("show");
   }
 
   function clearError() {
-    const box = byId("formError");
+    const box = el("formError");
     if (!box) return;
     box.textContent = "";
     box.classList.remove("show");
   }
 
+  function formatAmount(value) {
+    return "$" + Number(value).toFixed(2);
+  }
+
   function setAmounts() {
-    document.querySelectorAll("[data-amount]").forEach((el) => {
-      el.textContent = formatAmount(amount);
+    document.querySelectorAll("[data-amount]").forEach((node) => {
+      node.textContent = formatAmount(amount);
     });
+  }
+
+  function getCountryOption() {
+    const country = el("country");
+    return country.options[country.selectedIndex];
+  }
+
+  function updateCountryUI() {
+    const option = getCountryOption();
+    const phoneCode = option.getAttribute("data-phone") || "+1";
+    const postalLabel = option.getAttribute("data-postal") || "Postal code";
+    const isUS = el("country").value === "US";
+
+    el("phoneCode").value = phoneCode;
+    el("postalLabel").textContent = postalLabel;
+
+    el("stateSelectField").style.display = isUS ? "" : "none";
+    el("stateTextField").style.display = isUS ? "none" : "";
+  }
+
+  function getStateValue() {
+    return el("country").value === "US"
+      ? el("stateSelect").value.trim()
+      : el("stateText").value.trim();
   }
 
   function getData() {
     return {
-      firstName: byId("firstName")?.value.trim() || "",
-      lastName: byId("lastName")?.value.trim() || "",
-      email: byId("email")?.value.trim() || "",
-      phone: byId("phone")?.value.trim() || "",
-      address1: byId("address1")?.value.trim() || "",
-      address2: byId("address2")?.value.trim() || "",
-      city: byId("city")?.value.trim() || "",
-      state: byId("state")?.value.trim() || "",
-      postalCode: byId("postalCode")?.value.trim() || "",
-      country: byId("country")?.value.trim() || ""
+      firstName: el("firstName").value.trim(),
+      lastName: el("lastName").value.trim(),
+      email: el("email").value.trim(),
+      phoneCode: el("phoneCode").value.trim(),
+      phoneNumber: el("phoneNumber").value.trim(),
+      address1: el("address1").value.trim(),
+      address2: el("address2").value.trim(),
+      city: el("city").value.trim(),
+      state: getStateValue(),
+      postalCode: el("postalCode").value.trim(),
+      country: el("country").value.trim()
     };
   }
 
-  function validate() {
+  function validateCardForm() {
     clearError();
 
     const d = getData();
     const required = [
-      "firstName",
-      "lastName",
-      "email",
-      "phone",
-      "address1",
-      "city",
-      "state",
-      "postalCode",
-      "country"
+      d.firstName,
+      d.lastName,
+      d.email,
+      d.phoneNumber,
+      d.address1,
+      d.city,
+      d.state,
+      d.postalCode,
+      d.country
     ];
 
-    const missing = required.filter((key) => !d[key]);
-    if (missing.length) {
-      showError("Please complete all required fields before paying.");
+    if (required.some((value) => !value)) {
+      showError("Please complete all required fields.");
       return false;
     }
 
-    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email);
-    if (!emailOk) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) {
       showError("Please enter a valid email address.");
-      return false;
-    }
-
-    const countryOk = /^[A-Za-z]{2}$/.test(d.country);
-    if (!countryOk) {
-      showError("Please enter a valid 2-letter country code.");
       return false;
     }
 
     return true;
   }
 
-  function loadPayPal() {
-    return new Promise((resolve, reject) => {
-      if (window.paypal) {
-        resolve();
-        return;
-      }
+  function showCardForm() {
+    el("cardFormCard").classList.add("show");
+    el("selectedMethod").textContent = "Debit / Credit Card";
+    el("cardInstructions").classList.add("show");
+    setTimeout(() => {
+      el("cardFormCard").scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 50);
+  }
 
-      const script = document.createElement("script");
-      script.src = sdkUrl;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
+  function setPaypalMethod() {
+    el("selectedMethod").textContent = "PayPal";
+    el("cardInstructions").classList.remove("show");
+  }
+
+  function createPaypalOrder(data, actions) {
+    return actions.order.create({
+      intent: "CAPTURE",
+      purchase_units: [
+        {
+          amount: {
+            currency_code: currency,
+            value: amount
+          },
+          description: "TraceASI Checkout - " + formatAmount(amount)
+        }
+      ]
     });
   }
 
-  function createOrder(data, actions) {
+  function createCardOrder(data, actions) {
     const d = getData();
 
     return actions.order.create({
@@ -135,11 +161,11 @@
           surname: d.lastName
         },
         email_address: d.email,
-        phone: d.phone
+        phone: d.phoneNumber
           ? {
               phone_type: "MOBILE",
               phone_number: {
-                national_number: d.phone.replace(/\D/g, "").slice(0, 15)
+                national_number: (d.phoneCode + d.phoneNumber).replace(/\D/g, "").slice(0, 15)
               }
             }
           : undefined,
@@ -159,77 +185,86 @@
   }
 
   function showConfirmation(details) {
-    const capture =
-      details?.purchase_units?.[0]?.payments?.captures?.[0] || null;
-
-    const amountValue = capture?.amount?.value || amount;
+    const capture = details?.purchase_units?.[0]?.payments?.captures?.[0];
+    const paidAmount = capture?.amount?.value || amount;
     const payerName =
       [details?.payer?.name?.given_name || "", details?.payer?.name?.surname || ""]
         .join(" ")
-        .trim() ||
-      [byId("firstName")?.value || "", byId("lastName")?.value || ""]
-        .join(" ")
-        .trim();
+        .trim() || [el("firstName").value, el("lastName").value].join(" ").trim();
+    const payerEmail = details?.payer?.email_address || el("email").value || "";
 
-    const payerEmail =
-      details?.payer?.email_address || byId("email")?.value || "";
+    el("confirmOrderId").textContent = details?.id || "";
+    el("confirmAmount").textContent = formatAmount(paidAmount);
+    el("confirmName").textContent = payerName;
+    el("confirmEmail").textContent = payerEmail;
 
-    byId("confirmOrderId").textContent = details?.id || "";
-    byId("confirmAmount").textContent = formatAmount(amountValue);
-    byId("confirmName").textContent = payerName;
-    byId("confirmEmail").textContent = payerEmail;
-
-    byId("checkoutView").style.display = "none";
-    byId("confirmationView").classList.add("show");
+    el("checkoutView").style.display = "none";
+    el("confirmationView").classList.add("show");
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   function renderButtons() {
-    if (!window.paypal) {
-      showError("PayPal SDK unavailable.");
-      return;
-    }
+    paypal.Buttons({
+      fundingSource: paypal.FUNDING.PAYPAL,
+      style: {
+        layout: "vertical",
+        shape: "rect",
+        label: "paypal"
+      },
+      onClick: function (data, actions) {
+        setPaypalMethod();
+        clearError();
+        return actions.resolve();
+      },
+      createOrder: createPaypalOrder,
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(showConfirmation);
+      },
+      onError: function (err) {
+        console.error(err);
+        showError("PayPal payment could not be completed.");
+      }
+    }).render("#paypal-button-container");
 
-    window.paypal
-      .Buttons({
+    if (paypal.Buttons({ fundingSource: paypal.FUNDING.CARD }).isEligible()) {
+      let cardFormOpened = false;
+
+      paypal.Buttons({
+        fundingSource: paypal.FUNDING.CARD,
         style: {
           layout: "vertical",
-          shape: "rect",
-          label: "paypal"
+          shape: "rect"
         },
         onClick: function (data, actions) {
-          if (!validate()) {
+          if (!cardFormOpened) {
+            cardFormOpened = true;
+            showCardForm();
             return actions.reject();
           }
+
+          if (!validateCardForm()) {
+            return actions.reject();
+          }
+
+          clearError();
           return actions.resolve();
         },
-        createOrder: createOrder,
+        createOrder: createCardOrder,
         onApprove: function (data, actions) {
-          clearError();
-          return actions.order.capture().then(function (details) {
-            showConfirmation(details);
-          });
-        },
-        onCancel: function () {
-          showError("Payment was cancelled.");
+          return actions.order.capture().then(showConfirmation);
         },
         onError: function (err) {
           console.error(err);
-          showError("Payment could not be completed. Please try again.");
+          showError("Card payment could not be completed.");
         }
-      })
-      .render("#paypal-button-container");
+      }).render("#card-button-container");
+    }
   }
 
-  document.addEventListener("DOMContentLoaded", async function () {
+  document.addEventListener("DOMContentLoaded", function () {
     setAmounts();
-
-    try {
-      await loadPayPal();
-      renderButtons();
-    } catch (e) {
-      console.error(e);
-      showError("PayPal failed to load. Check your internet connection or client ID.");
-    }
+    updateCountryUI();
+    el("country").addEventListener("change", updateCountryUI);
+    renderButtons();
   });
 })();
