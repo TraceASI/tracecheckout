@@ -12,6 +12,22 @@
   <script src="https://www.paypal.com/sdk/js?client-id=AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE&currency=USD&intent=capture&components=buttons"></script>
 </head>
 <body>
+  <div class="space-bg">
+    <span class="star" style="top:8%;left:10%;animation-delay:.2s;"></span>
+    <span class="star" style="top:14%;left:28%;animation-delay:1.1s;"></span>
+    <span class="star" style="top:12%;left:72%;animation-delay:.8s;"></span>
+    <span class="star" style="top:20%;left:85%;animation-delay:2s;"></span>
+    <span class="star" style="top:34%;left:18%;animation-delay:1.4s;"></span>
+    <span class="star" style="top:46%;left:76%;animation-delay:.6s;"></span>
+    <span class="star" style="top:58%;left:8%;animation-delay:2.4s;"></span>
+    <span class="star" style="top:66%;left:62%;animation-delay:1.7s;"></span>
+    <span class="star" style="top:82%;left:26%;animation-delay:.5s;"></span>
+    <span class="star" style="top:78%;left:88%;animation-delay:2.2s;"></span>
+    <span class="shooting-star one"></span>
+    <span class="shooting-star two"></span>
+    <span class="shooting-star three"></span>
+  </div>
+
   <div class="wrap">
     <div class="brand">
       <div class="logo">TA</div>
@@ -68,8 +84,18 @@
     </div>
 
     <div id="confirmationView" class="card confirmation">
-      <h2>Payment successful</h2>
-      <p>Your payment has been completed.</p>
+      <div id="fxLayer" class="fx-layer">
+        <span class="shooting-star one"></span>
+        <span class="shooting-star two"></span>
+        <span class="shooting-star three"></span>
+        <span class="firework one"></span>
+        <span class="firework two"></span>
+        <span class="firework three"></span>
+      </div>
+
+      <div class="success-badge">✦ Payment Successful</div>
+      <h2 class="confirm-title-glow">Welcome to Cryptopia</h2>
+      <p class="welcome-line">Your payment has been completed and your journey begins now.</p>
 
       <div class="confirm-list">
         <div class="confirm-item"><strong>Order ID</strong><span id="confirmOrderId"></span></div>
