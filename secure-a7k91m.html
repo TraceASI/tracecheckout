@@ -7,39 +7,40 @@
   <link rel="stylesheet" href="styles.css" />
   <script src="https://www.paypal.com/sdk/js?client-id=AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE&currency=USD&intent=capture&components=buttons"></script>
   <style>
-    .payment-choice-card {
-      margin-bottom: 18px;
+    .payment-choice-card { margin-bottom: 18px; }
+    .hidden-form { display: none; margin-top: 18px; }
+    .hidden-form.show { display: block; }
+    .mini-note { margin-top: 12px; font-size: 12px; line-height: 1.5; color: var(--muted); }
+    .choice-heading { margin: 0 0 8px; font-size: 14px; }
+    .choice-subtext { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+    .spacer-10 { height: 10px; }
+
+    select {
+      width: 100%;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid rgba(118, 137, 191, 0.28);
+      background: rgba(10, 19, 52, 0.82);
+      color: var(--text);
+      padding: 0 14px;
+      outline: none;
     }
 
-    .hidden-form {
-      display: none;
-      margin-top: 18px;
+    select:focus {
+      border-color: rgba(98,176,255,0.8);
+      box-shadow: 0 0 0 3px rgba(98,176,255,0.14);
     }
 
-    .hidden-form.show {
-      display: block;
+    .phone-wrap {
+      display: grid;
+      grid-template-columns: 110px 1fr;
+      gap: 10px;
     }
 
-    .mini-note {
-      margin-top: 12px;
+    .muted-inline {
+      color: var(--muted);
       font-size: 12px;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .choice-heading {
-      margin: 0 0 8px;
-      font-size: 14px;
-    }
-
-    .choice-subtext {
-      margin: 0 0 14px;
-      font-size: 13px;
-      color: var(--muted);
-    }
-
-    .spacer-10 {
-      height: 10px;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -83,14 +84,39 @@
               <input id="lastName" type="text" autocomplete="family-name" />
             </div>
 
-            <div class="field">
+            <div class="field field-full">
               <label for="email">Email</label>
               <input id="email" type="email" autocomplete="email" />
             </div>
 
             <div class="field">
-              <label for="phone">Phone</label>
-              <input id="phone" type="tel" autocomplete="tel" />
+              <label for="country">Country</label>
+              <select id="country" autocomplete="country">
+                <option value="US" data-phone="+1" data-postal="ZIP code">United States</option>
+                <option value="GB" data-phone="+44" data-postal="Postcode">United Kingdom</option>
+                <option value="CA" data-phone="+1" data-postal="Postal code">Canada</option>
+                <option value="AU" data-phone="+61" data-postal="Postcode">Australia</option>
+                <option value="AE" data-phone="+971" data-postal="Postal code">United Arab Emirates</option>
+                <option value="DE" data-phone="+49" data-postal="Postal code">Germany</option>
+                <option value="FR" data-phone="+33" data-postal="Postal code">France</option>
+                <option value="IT" data-phone="+39" data-postal="Postal code">Italy</option>
+                <option value="ES" data-phone="+34" data-postal="Postal code">Postal code">Spain</option>
+                <option value="NL" data-phone="+31" data-postal="Postal code">Netherlands</option>
+                <option value="SE" data-phone="+46" data-postal="Postal code">Sweden</option>
+                <option value="NO" data-phone="+47" data-postal="Postal code">Norway</option>
+                <option value="DK" data-phone="+45" data-postal="Postal code">Denmark</option>
+                <option value="IE" data-phone="+353" data-postal="Eircode / Postal code">Ireland</option>
+                <option value="CH" data-phone="+41" data-postal="Postal code">Switzerland</option>
+                <option value="NZ" data-phone="+64" data-postal="Postcode">New Zealand</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="phoneNumber">Phone</label>
+              <div class="phone-wrap">
+                <input id="phoneCode" type="text" value="+1" readonly />
+                <input id="phoneNumber" type="tel" autocomplete="tel-national" placeholder="Phone number" />
+              </div>
             </div>
 
             <div class="field field-full">
@@ -108,19 +134,72 @@
               <input id="city" type="text" autocomplete="address-level2" />
             </div>
 
-            <div class="field">
-              <label for="state">State / Region</label>
-              <input id="state" type="text" autocomplete="address-level1" />
+            <div class="field" id="stateSelectField">
+              <label for="stateSelect">State</label>
+              <select id="stateSelect" autocomplete="address-level1">
+                <option value="">Select a state</option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CA">California</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+                <option value="DC">District of Columbia</option>
+              </select>
+            </div>
+
+            <div class="field" id="stateTextField" style="display:none;">
+              <label for="stateText">State / Region / Province</label>
+              <input id="stateText" type="text" autocomplete="address-level1" />
             </div>
 
             <div class="field">
-              <label for="postalCode">Postal code</label>
+              <label for="postalCode" id="postalLabel">ZIP code</label>
               <input id="postalCode" type="text" autocomplete="postal-code" />
-            </div>
-
-            <div class="field">
-              <label for="country">Country code</label>
-              <input id="country" type="text" value="US" autocomplete="country" />
             </div>
           </div>
 
@@ -194,6 +273,24 @@
       box.classList.remove("show");
     }
 
+    function updateCountryUI() {
+      const country = byId("country");
+      const option = country.options[country.selectedIndex];
+      const phoneCode = option.getAttribute("data-phone") || "";
+      const postalText = option.getAttribute("data-postal") || "Postal code";
+
+      byId("phoneCode").value = phoneCode;
+      byId("postalLabel").textContent = postalText;
+
+      if (country.value === "US") {
+        byId("stateSelectField").style.display = "";
+        byId("stateTextField").style.display = "none";
+      } else {
+        byId("stateSelectField").style.display = "none";
+        byId("stateTextField").style.display = "";
+      }
+    }
+
     function showCardForm() {
       cardFormOpened = true;
       byId("cardFormCard").classList.add("show");
@@ -208,16 +305,23 @@
       byId("selectedMethod").textContent = "PayPal";
     }
 
+    function getStateValue() {
+      return byId("country").value === "US"
+        ? byId("stateSelect").value.trim()
+        : byId("stateText").value.trim();
+    }
+
     function getData() {
       return {
         firstName: byId("firstName").value.trim(),
         lastName: byId("lastName").value.trim(),
         email: byId("email").value.trim(),
-        phone: byId("phone").value.trim(),
+        phoneCode: byId("phoneCode").value.trim(),
+        phoneNumber: byId("phoneNumber").value.trim(),
         address1: byId("address1").value.trim(),
         address2: byId("address2").value.trim(),
         city: byId("city").value.trim(),
-        state: byId("state").value.trim(),
+        state: getStateValue(),
         postalCode: byId("postalCode").value.trim(),
         country: byId("country").value.trim()
       };
@@ -231,7 +335,7 @@
         !d.firstName ||
         !d.lastName ||
         !d.email ||
-        !d.phone ||
+        !d.phoneNumber ||
         !d.address1 ||
         !d.city ||
         !d.state ||
@@ -248,13 +352,12 @@
         return false;
       }
 
-      const countryOk = /^[A-Za-z]{2}$/.test(d.country);
-      if (!countryOk) {
-        showError("Please enter a valid 2-letter country code.");
-        return false;
-      }
-
       return true;
+    }
+
+    function fullPhoneNumber() {
+      const d = getData();
+      return (d.phoneCode + " " + d.phoneNumber).trim();
     }
 
     function showConfirmation(details) {
@@ -329,11 +432,11 @@
             surname: d.lastName
           },
           email_address: d.email,
-          phone: d.phone
+          phone: d.phoneNumber
             ? {
                 phone_type: "MOBILE",
                 phone_number: {
-                  national_number: d.phone.replace(/\D/g, "").slice(0, 15)
+                  national_number: (d.phoneCode + d.phoneNumber).replace(/\D/g, "").slice(0, 15)
                 }
               }
             : undefined,
@@ -408,6 +511,9 @@
         }
       }).render("#card-button-container");
     }
+
+    byId("country").addEventListener("change", updateCountryUI);
+    updateCountryUI();
   </script>
 </body>
 </html>
