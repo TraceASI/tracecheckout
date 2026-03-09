@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TraceASI - $1 Checkout</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>window.CHECKOUT_AMOUNT = 1;</script>
+  <script defer src="script.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div id="checkoutView" class="grid">
+      <div>
+        <div class="header">
+          <div class="brand">TraceASI</div>
+          <div class="sub">Secure checkout</div>
+        </div>
+        <div class="card">
+          <h2 style="margin-top:0;">Billing details</h2>
+          <div class="row">
+            <div class="field">
+              <label for="firstName">First name</label>
+              <input id="firstName" type="text" placeholder="John" />
+            </div>
+            <div class="field">
+              <label for="lastName">Last name</label>
+              <input id="lastName" type="text" placeholder="Smith" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" placeholder="john@example.com" />
+            </div>
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" type="tel" placeholder="5551234567" />
+            </div>
+          </div>
+          <div class="field">
+            <label for="address1">Address line 1</label>
+            <input id="address1" type="text" placeholder="123 Main Street" />
+          </div>
+          <div class="field">
+            <label for="address2">Address line 2</label>
+            <input id="address2" type="text" placeholder="Apartment, suite, etc. (optional)" />
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="city">City</label>
+              <input id="city" type="text" placeholder="New York" />
+            </div>
+            <div class="field">
+              <label for="state">State / Region</label>
+              <input id="state" type="text" placeholder="NY" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="postalCode">Postal code</label>
+              <input id="postalCode" type="text" placeholder="10001" />
+            </div>
+            <div class="field">
+              <label for="country">Country code</label>
+              <input id="country" type="text" placeholder="US" maxlength="2" />
+            </div>
+          </div>
+          <p id="formError" class="error"></p>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h2 style="margin-top:0;">Order summary</h2>
+          <div class="summary-line"><span>Amount</span><strong data-amount></strong></div>
+          <div class="summary-line"><span>Brand</span><strong>TraceASI</strong></div>
+          <div class="summary-line"><span>Payment method</span><strong>PayPal / Card</strong></div>
+          <div class="amount" data-amount></div>
+          <div id="paypal-button-container"></div>
+          <p class="note">Card payments and wallet payments are processed securely through PayPal. Your site does not directly store raw card details.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmationView" class="card confirmation">
+      <div class="check">✓</div>
+      <h2>Payment successful</h2>
+      <p>Your payment has been captured.</p>
+      <div class="summary-line"><span>Name</span><strong id="confirmName">Customer</strong></div>
+      <div class="summary-line"><span>Amount paid</span><strong id="confirmAmount"></strong></div>
+      <div class="summary-line"><span>Order ID</span><strong id="confirmOrderId"></strong></div>
+      <button class="btn" onclick="restartCheckout()">Make another payment</button>
+    </div>
+  </div>
+</body>
+</html>

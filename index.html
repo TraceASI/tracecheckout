@@ -1,0 +1,167 @@
+(function () {
+  const CLIENT_ID = 'AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE';
+  const amount = window.CHECKOUT_AMOUNT;
+
+  function loadPayPal() {
+    return new Promise((resolve, reject) => {
+      if (window.paypal) return resolve();
+      const s = document.createElement('script');
+      s.src = `https://www.paypal.com/sdk/js?client-id=${CLIENT_ID}&currency=USD&intent=capture`;
+      s.onload = resolve;
+      s.onerror = reject;
+      document.head.appendChild(s);
+    });
+  }
+
+  function getField(id) {
+    return document.getElementById(id);
+  }
+
+  function getCustomerData() {
+    return {
+      firstName: getField('firstName').value.trim(),
+      lastName: getField('lastName').value.trim(),
+      email: getField('email').value.trim(),
+      phone: getField('phone').value.trim(),
+      address1: getField('address1').value.trim(),
+      address2: getField('address2').value.trim(),
+      city: getField('city').value.trim(),
+      state: getField('state').value.trim(),
+      postalCode: getField('postalCode').value.trim(),
+      country: getField('country').value.trim()
+    };
+  }
+
+  function validate() {
+    const data = getCustomerData();
+    const required = ['firstName','lastName','email','phone','address1','city','state','postalCode','country'];
+    const missing = required.filter((k) => !data[k]);
+    const error = getField('formError');
+    if (missing.length) {
+      error.textContent = 'Please complete all required fields before paying.';
+      return false;
+    }
+    error.textContent = '';
+    return true;
+  }
+
+  function fillSummary() {
+    const amountEls = document.querySelectorAll('[data-amount]');
+    amountEls.forEach(el => { el.textContent = `$${Number(amount).toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 0})}`; });
+  }
+
+  function showConfirmation(details) {
+    const checkout = getField('checkoutView');
+    const confirmation = getField('confirmationView');
+    const orderId = details?.id || '';
+    const payerName = details?.payer?.name ? `${details.payer.name.given_name || ''} ${details.payer.name.surname || ''}`.trim() : '';
+    const amountValue = details?.purchase_units?.[0]?.payments?.captures?.[0]?.amount?.value || String(amount);
+
+    getField('confirmAmount').textContent = `$${Number(amountValue).toLocaleString('en-US')}`;
+    getField('confirmOrderId').textContent = orderId;
+    getField('confirmName').textContent = payerName || 'Customer';
+
+    checkout.style.display = 'none';
+    confirmation.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  window.restartCheckout = function () {
+    getField('confirmationView').classList.remove('show');
+    getField('checkoutView').style.display = 'grid';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    fillSummary();
+    try {
+      await loadPayPal();
+    } catch (e) {
+      getField('paypal-button-container').innerHTML = '<p class="error">PayPal failed to load. Check your internet connection or client ID.</p>';
+      return;
+    }
+
+    if (!window.paypal) {
+      getField('paypal-button-container').innerHTML = '<p class="error">PayPal SDK unavailable.</p>';
+      return;
+    }
+
+    window.paypal.Buttons({
+      style: {
+        layout: 'vertical',
+        shape: 'rect',
+        label: 'pay'
+      },
+      onClick: function (data, actions) {
+        if (!validate()) {
+          return actions.reject();
+        }
+        return actions.resolve();
+      },
+      createOrder: function (data, actions) {
+        const customer = getCustomerData();
+        return actions.order.create({
+          purchase_units: [{
+            amount: {
+              currency_code: 'USD',
+              value: String(amount)
+            },
+            description: `TraceASI Checkout - $${amount}`,
+            custom_id: customer.email || customer.phone || 'traceasi-customer',
+            shipping: {
+              name: {
+                full_name: `${customer.firstName} ${customer.lastName}`.trim()
+              },
+              address: {
+                address_line_1: customer.address1,
+                address_line_2: customer.address2 || '',
+                admin_area_2: customer.city,
+                admin_area_1: customer.state,
+                postal_code: customer.postalCode,
+                country_code: customer.country.toUpperCase().slice(0, 2)
+              }
+            }
+          }],
+          payer: {
+            name: {
+              given_name: customer.firstName,
+              surname: customer.lastName
+            },
+            email_address: customer.email,
+            phone: {
+              phone_type: 'MOBILE',
+              phone_number: {
+                national_number: customer.phone.replace(/[^\d]/g, '').slice(0, 15)
+              }
+            },
+            address: {
+              address_line_1: customer.address1,
+              address_line_2: customer.address2 || '',
+              admin_area_2: customer.city,
+              admin_area_1: customer.state,
+              postal_code: customer.postalCode,
+              country_code: customer.country.toUpperCase().slice(0, 2)
+            }
+          },
+          application_context: {
+            shipping_preference: 'SET_PROVIDED_ADDRESS'
+          }
+        });
+      },
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(function (details) {
+          showConfirmation(details);
+        });
+      },
+      onError: function (err) {
+        const error = getField('formError');
+        error.textContent = 'Payment could not be completed. Please try again.';
+        console.error(err);
+      },
+      onCancel: function () {
+        const error = getField('formError');
+        error.textContent = 'Payment was cancelled.';
+      }
+    }).render('#paypal-button-container');
+  });
+})();
