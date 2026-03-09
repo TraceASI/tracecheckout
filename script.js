@@ -1,9 +1,18 @@
 (function () {
-  const amount = window.CHECKOUT_AMOUNT;
+  const amount = String(window.CHECKOUT_AMOUNT || "1.00");
+  const currency = window.CHECKOUT_CURRENCY || "USD";
   const sdkUrl = window.PAYPAL_SDK_URL;
 
   function byId(id) {
     return document.getElementById(id);
+  }
+
+  function formatAmount(value) {
+    const n = Number(value);
+    return "$" + n.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
 
   function showError(message) {
@@ -20,45 +29,44 @@
     box.classList.remove("show");
   }
 
-  function setSelectedMethod(label) {
-    const method = byId("selectedMethod");
-    if (method) method.textContent = label;
-  }
-
-  function showCardPanel() {
-    const panel = byId("cardInfoPanel");
-    if (panel) panel.classList.add("show");
-    setSelectedMethod("Debit / Credit Card");
-  }
-
-  function hideCardPanel() {
-    const panel = byId("cardInfoPanel");
-    if (panel) panel.classList.remove("show");
-    setSelectedMethod("PayPal");
+  function setAmounts() {
+    document.querySelectorAll("[data-amount]").forEach((el) => {
+      el.textContent = formatAmount(amount);
+    });
   }
 
   function getData() {
     return {
-      firstName: byId("firstName").value.trim(),
-      lastName: byId("lastName").value.trim(),
-      email: byId("email").value.trim(),
-      phone: byId("phone").value.trim(),
-      address1: byId("address1").value.trim(),
-      address2: byId("address2").value.trim(),
-      city: byId("city").value.trim(),
-      state: byId("state").value.trim(),
-      postalCode: byId("postalCode").value.trim(),
-      country: byId("country").value.trim()
+      firstName: byId("firstName")?.value.trim() || "",
+      lastName: byId("lastName")?.value.trim() || "",
+      email: byId("email")?.value.trim() || "",
+      phone: byId("phone")?.value.trim() || "",
+      address1: byId("address1")?.value.trim() || "",
+      address2: byId("address2")?.value.trim() || "",
+      city: byId("city")?.value.trim() || "",
+      state: byId("state")?.value.trim() || "",
+      postalCode: byId("postalCode")?.value.trim() || "",
+      country: byId("country")?.value.trim() || ""
     };
   }
 
   function validate() {
     clearError();
-    const d = getData();
-    const missing = Object.entries(d)
-      .filter(([key, value]) => key !== "address2" && !value)
-      .map(([key]) => key);
 
+    const d = getData();
+    const required = [
+      "firstName",
+      "lastName",
+      "email",
+      "phone",
+      "address1",
+      "city",
+      "state",
+      "postalCode",
+      "country"
+    ];
+
+    const missing = required.filter((key) => !d[key]);
     if (missing.length) {
       showError("Please complete all required fields before paying.");
       return false;
@@ -70,16 +78,13 @@
       return false;
     }
 
-    return true;
-  }
+    const countryOk = /^[A-Za-z]{2}$/.test(d.country);
+    if (!countryOk) {
+      showError("Please enter a valid 2-letter country code.");
+      return false;
+    }
 
-  function setSummary() {
-    document.querySelectorAll("[data-amount]").forEach((el) => {
-      el.textContent = "$" + Number(amount).toLocaleString("en-US", {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      });
-    });
+    return true;
   }
 
   function loadPayPal() {
@@ -88,6 +93,7 @@
         resolve();
         return;
       }
+
       const script = document.createElement("script");
       script.src = sdkUrl;
       script.onload = resolve;
@@ -98,37 +104,52 @@
 
   function createOrder(data, actions) {
     const d = getData();
+
     return actions.order.create({
       intent: "CAPTURE",
-      purchase_units: [{
-        amount: { currency_code: "USD", value: String(amount) },
-        description: "TraceASI Checkout - $" + amount,
-        shipping: {
-          name: { full_name: (d.firstName + " " + d.lastName).trim() },
-          address: {
-            address_line_1: d.address1,
-            address_line_2: d.address2 || undefined,
-            admin_area_2: d.city,
-            admin_area_1: d.state,
-            postal_code: d.postalCode,
-            country_code: d.country.toUpperCase().slice(0, 2)
+      purchase_units: [
+        {
+          amount: {
+            currency_code: currency,
+            value: amount
+          },
+          description: "TraceASI Checkout - " + formatAmount(amount),
+          shipping: {
+            name: {
+              full_name: (d.firstName + " " + d.lastName).trim()
+            },
+            address: {
+              address_line_1: d.address1,
+              address_line_2: d.address2 || undefined,
+              admin_area_2: d.city,
+              admin_area_1: d.state,
+              postal_code: d.postalCode,
+              country_code: d.country.toUpperCase()
+            }
           }
         }
-      }],
+      ],
       payer: {
-        name: { given_name: d.firstName, surname: d.lastName },
+        name: {
+          given_name: d.firstName,
+          surname: d.lastName
+        },
         email_address: d.email,
-        phone: d.phone ? {
-          phone_type: "MOBILE",
-          phone_number: { national_number: d.phone.replace(/\D/g, "").slice(0, 15) }
-        } : undefined,
+        phone: d.phone
+          ? {
+              phone_type: "MOBILE",
+              phone_number: {
+                national_number: d.phone.replace(/\D/g, "").slice(0, 15)
+              }
+            }
+          : undefined,
         address: {
           address_line_1: d.address1,
           address_line_2: d.address2 || undefined,
           admin_area_2: d.city,
           admin_area_1: d.state,
           postal_code: d.postalCode,
-          country_code: d.country.toUpperCase().slice(0, 2)
+          country_code: d.country.toUpperCase()
         }
       },
       application_context: {
@@ -138,15 +159,23 @@
   }
 
   function showConfirmation(details) {
-    const capture = details?.purchase_units?.[0]?.payments?.captures?.[0] || null;
-    const amountValue = capture?.amount?.value || String(amount);
-    const payerName = details?.payer?.name
-      ? [details.payer.name.given_name || "", details.payer.name.surname || ""].join(" ").trim()
-      : [byId("firstName").value, byId("lastName").value].join(" ").trim();
-    const payerEmail = details?.payer?.email_address || byId("email").value;
+    const capture =
+      details?.purchase_units?.[0]?.payments?.captures?.[0] || null;
+
+    const amountValue = capture?.amount?.value || amount;
+    const payerName =
+      [details?.payer?.name?.given_name || "", details?.payer?.name?.surname || ""]
+        .join(" ")
+        .trim() ||
+      [byId("firstName")?.value || "", byId("lastName")?.value || ""]
+        .join(" ")
+        .trim();
+
+    const payerEmail =
+      details?.payer?.email_address || byId("email")?.value || "";
 
     byId("confirmOrderId").textContent = details?.id || "";
-    byId("confirmAmount").textContent = "$" + Number(amountValue).toLocaleString("en-US");
+    byId("confirmAmount").textContent = formatAmount(amountValue);
     byId("confirmName").textContent = payerName;
     byId("confirmEmail").textContent = payerEmail;
 
@@ -161,36 +190,17 @@
       return;
     }
 
-    window.paypal.Buttons({
-      style: { layout: "vertical", shape: "rect", label: "paypal" },
-      onClick: function (data, actions) {
-        hideCardPanel();
-        if (!validate()) return actions.reject();
-        return actions.resolve();
-      },
-      createOrder: createOrder,
-      onApprove: function (data, actions) {
-        clearError();
-        return actions.order.capture().then(function (details) {
-          showConfirmation(details);
-        });
-      },
-      onCancel: function () { showError("Payment was cancelled."); },
-      onError: function (err) {
-        console.error(err);
-        showError("Payment could not be completed. Please try again.");
-      }
-    }).render("#paypal-button-container");
-
-    const cardButtons = window.paypal.Buttons({ fundingSource: window.paypal.FUNDING.CARD });
-    if (window.paypal.FUNDING && cardButtons.isEligible()) {
-      cardButtons.render("#card-button-container");
-      window.paypal.Buttons({
-        fundingSource: window.paypal.FUNDING.CARD,
-        style: { layout: "vertical", shape: "rect" },
+    window.paypal
+      .Buttons({
+        style: {
+          layout: "vertical",
+          shape: "rect",
+          label: "paypal"
+        },
         onClick: function (data, actions) {
-          showCardPanel();
-          if (!validate()) return actions.reject();
+          if (!validate()) {
+            return actions.reject();
+          }
           return actions.resolve();
         },
         createOrder: createOrder,
@@ -200,17 +210,20 @@
             showConfirmation(details);
           });
         },
-        onCancel: function () { showError("Payment was cancelled."); },
+        onCancel: function () {
+          showError("Payment was cancelled.");
+        },
         onError: function (err) {
           console.error(err);
           showError("Payment could not be completed. Please try again.");
         }
-      }).render("#card-button-container");
-    }
+      })
+      .render("#paypal-button-container");
   }
 
   document.addEventListener("DOMContentLoaded", async function () {
-    setSummary();
+    setAmounts();
+
     try {
       await loadPayPal();
       renderButtons();
