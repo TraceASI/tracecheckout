@@ -65,6 +65,10 @@
 
     el("checkoutView").style.display = "none";
     el("confirmationView").classList.add("show");
+
+    const fx = el("fxLayer");
+    if (fx) fx.classList.add("show");
+
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
