@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TraceASI Secure Checkout</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.CHECKOUT_AMOUNT = "1995.00";
+    window.CHECKOUT_CURRENCY = "USD";
+  </script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE&currency=USD&intent=capture&components=buttons"></script>
+</head>
+<body>
+  <div class="space-bg">
+    <span class="star" style="top:8%;left:10%;animation-delay:.2s;"></span>
+    <span class="star" style="top:14%;left:28%;animation-delay:1.1s;"></span>
+    <span class="star" style="top:12%;left:72%;animation-delay:.8s;"></span>
+    <span class="star" style="top:20%;left:85%;animation-delay:2s;"></span>
+    <span class="star" style="top:34%;left:18%;animation-delay:1.4s;"></span>
+    <span class="star" style="top:46%;left:76%;animation-delay:.6s;"></span>
+    <span class="star" style="top:58%;left:8%;animation-delay:2.4s;"></span>
+    <span class="star" style="top:66%;left:62%;animation-delay:1.7s;"></span>
+    <span class="star" style="top:82%;left:26%;animation-delay:.5s;"></span>
+    <span class="star" style="top:78%;left:88%;animation-delay:2.2s;"></span>
+    <span class="shooting-star one"></span>
+    <span class="shooting-star two"></span>
+    <span class="shooting-star three"></span>
+  </div>
+
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">TA</div>
+      <div>
+        <h1>TraceASI Secure Checkout</h1>
+        <p>Complete your payment securely</p>
+      </div>
+    </div>
+
+    <div id="checkoutView" class="grid">
+      <div>
+        <div class="card">
+          <h2 class="choice-heading">Choose payment method</h2>
+          <p class="choice-subtext">Click PayPal or Debit / Credit Card below to continue.</p>
+
+          <div id="formError" class="error"></div>
+
+          <div id="paypal-button-container"></div>
+          <div class="spacer-10"></div>
+          <div id="card-button-container"></div>
+
+          <p class="mini-note">
+            Card and PayPal payments are securely handled by PayPal.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="amount-box">
+          <div class="small">Amount due</div>
+          <div class="amount" data-amount>$1.00</div>
+        </div>
+
+        <h2 class="section-title">Order summary</h2>
+        <div class="summary-list">
+          <div class="summary-row">
+            <span>Brand</span>
+            <strong>TraceASI</strong>
+          </div>
+          <div class="summary-row">
+            <span>Payment method</span>
+            <strong id="selectedMethod">PayPal / Card</strong>
+          </div>
+          <div class="summary-row">
+            <span>Currency</span>
+            <strong>USD</strong>
+          </div>
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <strong data-amount>$1.00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmationView" class="card confirmation">
+      <div id="fxLayer" class="fx-layer">
+        <span class="shooting-star one"></span>
+        <span class="shooting-star two"></span>
+        <span class="shooting-star three"></span>
+        <span class="firework one"></span>
+        <span class="firework two"></span>
+        <span class="firework three"></span>
+      </div>
+
+      <div class="success-badge">✦ Payment Successful</div>
+      <h2 class="confirm-title-glow">Welcome to Cryptopia</h2>
+      <p class="welcome-line">Your payment has been completed and your journey begins now.</p>
+
+      <div class="confirm-list">
+        <div class="confirm-item"><strong>Order ID</strong><span id="confirmOrderId"></span></div>
+        <div class="confirm-item"><strong>Amount</strong><span id="confirmAmount"></span></div>
+        <div class="confirm-item"><strong>Name</strong><span id="confirmName"></span></div>
+        <div class="confirm-item"><strong>Email</strong><span id="confirmEmail"></span></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
