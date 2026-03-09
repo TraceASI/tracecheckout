@@ -5,11 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TraceASI Secure Checkout</title>
   <link rel="stylesheet" href="styles.css" />
-  <script>
-    window.CHECKOUT_AMOUNT = "1.00";
-    window.CHECKOUT_CURRENCY = "USD";
-    window.PAYPAL_SDK_URL = "https://www.paypal.com/sdk/js?client-id=AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE&currency=USD&intent=capture";
-  </script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE&currency=USD&intent=capture&components=buttons"></script>
+  <style>
+    .payment-choice-card {
+      margin-bottom: 18px;
+    }
+
+    .hidden-form {
+      display: none;
+      margin-top: 18px;
+    }
+
+    .hidden-form.show {
+      display: block;
+    }
+
+    .mini-note {
+      margin-top: 12px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .choice-heading {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .choice-subtext {
+      margin: 0 0 14px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .spacer-10 {
+      height: 10px;
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
@@ -22,73 +54,86 @@
     </div>
 
     <div id="checkoutView" class="grid">
-      <div class="card">
-        <h2 class="section-title">Customer details</h2>
-        <div id="formError" class="error"></div>
+      <div>
+        <div class="card payment-choice-card">
+          <h2 class="choice-heading">Choose payment method</h2>
+          <p class="choice-subtext">Select PayPal or Debit / Credit Card below.</p>
 
-        <div class="form-grid">
-          <div class="field">
-            <label for="firstName">First name</label>
-            <input id="firstName" type="text" autocomplete="given-name" />
-          </div>
+          <div id="paypal-button-container"></div>
+          <div class="spacer-10"></div>
+          <div id="card-button-container"></div>
 
-          <div class="field">
-            <label for="lastName">Last name</label>
-            <input id="lastName" type="text" autocomplete="family-name" />
-          </div>
-
-          <div class="field">
-            <label for="email">Email</label>
-            <input id="email" type="email" autocomplete="email" />
-          </div>
-
-          <div class="field">
-            <label for="phone">Phone</label>
-            <input id="phone" type="tel" autocomplete="tel" />
-          </div>
-
-          <div class="field field-full">
-            <label for="address1">Address line 1</label>
-            <input id="address1" type="text" autocomplete="address-line1" />
-          </div>
-
-          <div class="field field-full">
-            <label for="address2">Address line 2 (optional)</label>
-            <input id="address2" type="text" autocomplete="address-line2" />
-          </div>
-
-          <div class="field">
-            <label for="city">City</label>
-            <input id="city" type="text" autocomplete="address-level2" />
-          </div>
-
-          <div class="field">
-            <label for="state">State / Region</label>
-            <input id="state" type="text" autocomplete="address-level1" />
-          </div>
-
-          <div class="field">
-            <label for="postalCode">Postal code</label>
-            <input id="postalCode" type="text" autocomplete="postal-code" />
-          </div>
-
-          <div class="field">
-            <label for="country">Country code</label>
-            <input id="country" type="text" value="US" autocomplete="country" />
-          </div>
+          <p class="mini-note">
+            Card and PayPal payments are securely handled by PayPal.
+          </p>
         </div>
 
-        <div id="paypal-button-container"></div>
+        <div id="cardFormCard" class="card hidden-form">
+          <h2 class="section-title">Card billing details</h2>
+          <div id="formError" class="error"></div>
 
-        <p class="helper-text">
-          PayPal and card payments are securely handled by PayPal.
-        </p>
+          <div class="form-grid">
+            <div class="field">
+              <label for="firstName">First name</label>
+              <input id="firstName" type="text" autocomplete="given-name" />
+            </div>
+
+            <div class="field">
+              <label for="lastName">Last name</label>
+              <input id="lastName" type="text" autocomplete="family-name" />
+            </div>
+
+            <div class="field">
+              <label for="email">Email</label>
+              <input id="email" type="email" autocomplete="email" />
+            </div>
+
+            <div class="field">
+              <label for="phone">Phone</label>
+              <input id="phone" type="tel" autocomplete="tel" />
+            </div>
+
+            <div class="field field-full">
+              <label for="address1">Address line 1</label>
+              <input id="address1" type="text" autocomplete="address-line1" />
+            </div>
+
+            <div class="field field-full">
+              <label for="address2">Address line 2 (optional)</label>
+              <input id="address2" type="text" autocomplete="address-line2" />
+            </div>
+
+            <div class="field">
+              <label for="city">City</label>
+              <input id="city" type="text" autocomplete="address-level2" />
+            </div>
+
+            <div class="field">
+              <label for="state">State / Region</label>
+              <input id="state" type="text" autocomplete="address-level1" />
+            </div>
+
+            <div class="field">
+              <label for="postalCode">Postal code</label>
+              <input id="postalCode" type="text" autocomplete="postal-code" />
+            </div>
+
+            <div class="field">
+              <label for="country">Country code</label>
+              <input id="country" type="text" value="US" autocomplete="country" />
+            </div>
+          </div>
+
+          <p class="helper-text">
+            After filling this out, click the Debit or Credit Card button again to continue.
+          </p>
+        </div>
       </div>
 
       <div class="card">
         <div class="amount-box">
           <div class="small">Amount due</div>
-          <div class="amount" data-amount>$1.00</div>
+          <div class="amount">$1.00</div>
         </div>
 
         <h2 class="section-title">Order summary</h2>
@@ -99,7 +144,7 @@
           </div>
           <div class="summary-row">
             <span>Payment method</span>
-            <strong>PayPal / Card</strong>
+            <strong id="selectedMethod">PayPal / Card</strong>
           </div>
           <div class="summary-row">
             <span>Currency</span>
@@ -107,7 +152,7 @@
           </div>
           <div class="summary-row total-row">
             <span>Total</span>
-            <strong data-amount>$1.00</strong>
+            <strong>$1.00</strong>
           </div>
         </div>
       </div>
@@ -126,6 +171,243 @@
     </div>
   </div>
 
-  <script src="script.js"></script>
+  <script>
+    const CHECKOUT_AMOUNT = "1.00";
+    const CHECKOUT_CURRENCY = "USD";
+    let cardFormOpened = false;
+
+    function byId(id) {
+      return document.getElementById(id);
+    }
+
+    function showError(message) {
+      const box = byId("formError");
+      if (!box) return;
+      box.textContent = message;
+      box.classList.add("show");
+    }
+
+    function clearError() {
+      const box = byId("formError");
+      if (!box) return;
+      box.textContent = "";
+      box.classList.remove("show");
+    }
+
+    function showCardForm() {
+      cardFormOpened = true;
+      byId("cardFormCard").classList.add("show");
+      byId("selectedMethod").textContent = "Debit / Credit Card";
+      window.scrollTo({
+        top: byId("cardFormCard").getBoundingClientRect().top + window.scrollY - 20,
+        behavior: "smooth"
+      });
+    }
+
+    function setPaypalMethod() {
+      byId("selectedMethod").textContent = "PayPal";
+    }
+
+    function getData() {
+      return {
+        firstName: byId("firstName").value.trim(),
+        lastName: byId("lastName").value.trim(),
+        email: byId("email").value.trim(),
+        phone: byId("phone").value.trim(),
+        address1: byId("address1").value.trim(),
+        address2: byId("address2").value.trim(),
+        city: byId("city").value.trim(),
+        state: byId("state").value.trim(),
+        postalCode: byId("postalCode").value.trim(),
+        country: byId("country").value.trim()
+      };
+    }
+
+    function validateCardForm() {
+      clearError();
+
+      const d = getData();
+      if (
+        !d.firstName ||
+        !d.lastName ||
+        !d.email ||
+        !d.phone ||
+        !d.address1 ||
+        !d.city ||
+        !d.state ||
+        !d.postalCode ||
+        !d.country
+      ) {
+        showError("Please complete all required fields before paying.");
+        return false;
+      }
+
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email);
+      if (!emailOk) {
+        showError("Please enter a valid email address.");
+        return false;
+      }
+
+      const countryOk = /^[A-Za-z]{2}$/.test(d.country);
+      if (!countryOk) {
+        showError("Please enter a valid 2-letter country code.");
+        return false;
+      }
+
+      return true;
+    }
+
+    function showConfirmation(details) {
+      const capture = details?.purchase_units?.[0]?.payments?.captures?.[0];
+      const amount = capture?.amount?.value || CHECKOUT_AMOUNT;
+
+      const payerName =
+        [details?.payer?.name?.given_name || "", details?.payer?.name?.surname || ""]
+          .join(" ")
+          .trim() ||
+        [byId("firstName")?.value || "", byId("lastName")?.value || ""]
+          .join(" ")
+          .trim();
+
+      const payerEmail = details?.payer?.email_address || byId("email")?.value || "";
+
+      byId("confirmOrderId").textContent = details?.id || "";
+      byId("confirmAmount").textContent = "$" + Number(amount).toFixed(2);
+      byId("confirmName").textContent = payerName;
+      byId("confirmEmail").textContent = payerEmail;
+
+      byId("checkoutView").style.display = "none";
+      byId("confirmationView").classList.add("show");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function createPaypalOrder(data, actions) {
+      return actions.order.create({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            amount: {
+              currency_code: CHECKOUT_CURRENCY,
+              value: CHECKOUT_AMOUNT
+            },
+            description: "TraceASI Checkout - $1.00"
+          }
+        ]
+      });
+    }
+
+    function createCardOrder(data, actions) {
+      const d = getData();
+
+      return actions.order.create({
+        intent: "CAPTURE",
+        purchase_units: [
+          {
+            amount: {
+              currency_code: CHECKOUT_CURRENCY,
+              value: CHECKOUT_AMOUNT
+            },
+            description: "TraceASI Checkout - $1.00",
+            shipping: {
+              name: {
+                full_name: (d.firstName + " " + d.lastName).trim()
+              },
+              address: {
+                address_line_1: d.address1,
+                address_line_2: d.address2 || undefined,
+                admin_area_2: d.city,
+                admin_area_1: d.state,
+                postal_code: d.postalCode,
+                country_code: d.country.toUpperCase()
+              }
+            }
+          }
+        ],
+        payer: {
+          name: {
+            given_name: d.firstName,
+            surname: d.lastName
+          },
+          email_address: d.email,
+          phone: d.phone
+            ? {
+                phone_type: "MOBILE",
+                phone_number: {
+                  national_number: d.phone.replace(/\D/g, "").slice(0, 15)
+                }
+              }
+            : undefined,
+          address: {
+            address_line_1: d.address1,
+            address_line_2: d.address2 || undefined,
+            admin_area_2: d.city,
+            admin_area_1: d.state,
+            postal_code: d.postalCode,
+            country_code: d.country.toUpperCase()
+          }
+        },
+        application_context: {
+          shipping_preference: "SET_PROVIDED_ADDRESS"
+        }
+      });
+    }
+
+    paypal.Buttons({
+      fundingSource: paypal.FUNDING.PAYPAL,
+      style: {
+        layout: "vertical",
+        shape: "rect",
+        label: "paypal"
+      },
+      onClick: function (data, actions) {
+        setPaypalMethod();
+        return actions.resolve();
+      },
+      createOrder: createPaypalOrder,
+      onApprove: function (data, actions) {
+        return actions.order.capture().then(function (details) {
+          showConfirmation(details);
+        });
+      },
+      onCancel: function () {},
+      onError: function (err) {
+        console.error(err);
+      }
+    }).render("#paypal-button-container");
+
+    if (paypal.Buttons({ fundingSource: paypal.FUNDING.CARD }).isEligible()) {
+      paypal.Buttons({
+        fundingSource: paypal.FUNDING.CARD,
+        style: {
+          layout: "vertical",
+          shape: "rect"
+        },
+        onClick: function (data, actions) {
+          if (!cardFormOpened) {
+            showCardForm();
+            return actions.reject();
+          }
+
+          if (!validateCardForm()) {
+            return actions.reject();
+          }
+
+          clearError();
+          return actions.resolve();
+        },
+        createOrder: createCardOrder,
+        onApprove: function (data, actions) {
+          return actions.order.capture().then(function (details) {
+            showConfirmation(details);
+          });
+        },
+        onCancel: function () {},
+        onError: function (err) {
+          console.error(err);
+          showError("Payment could not be completed. Please try again.");
+        }
+      }).render("#card-button-container");
+    }
+  </script>
 </body>
 </html>
