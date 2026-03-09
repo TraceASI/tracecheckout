@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TraceASI Checkout Links</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">TA</div>
+      <div>
+        <h1>TraceASI Checkout</h1>
+        <p>Fixed amount PayPal checkout pages</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="section-title">Choose a checkout page</h2>
+      <p class="small">Upload all files to your GitHub repo root. Then open any page below.</p>
+      <div class="links">
+        <a href="checkout-1.html">$1 checkout</a>
+        <a href="checkout-200.html">$200 checkout</a>
+        <a href="checkout-400.html">$400 checkout</a>
+        <a href="checkout-995.html">$995 checkout</a>
+        <a href="checkout-1995.html">$1,995 checkout</a>
+        <a href="checkout-2995.html">$2,995 checkout</a>
+        <a href="checkout-3995.html">$3,995 checkout</a>
+        <a href="checkout-4995.html">$4,995 checkout</a>
+        <a href="checkout-5995.html">$5,995 checkout</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
