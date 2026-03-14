@@ -46,77 +46,49 @@
   function createOrder(data, actions) {
     return actions.order.create({
       intent: "CAPTURE",
-      purchase_units: [
-        {
-          amount: {
-            currency_code: currency,
-            value: amount
-          },
-          description: "TraceASI Checkout - " + formatAmount(amount)
-        }
-      ]
+      purchase_units: [{
+        amount: {
+          currency_code: currency,
+          value: amount
+        },
+        description: "TraceASI Checkout - " + formatAmount(amount)
+      }]
     });
   }
 
   function getDeclineReason(details) {
 
-    const capture = details?.purchase_units?.[0]?.payments?.captures?.[0];
-    const issue =
-      capture?.processor_response?.response_code ||
-      capture?.status ||
-      details?.status;
-
-    console.log("Decline issue:", issue);
     console.log("Full PayPal response:", details);
 
-    switch (issue) {
+    const status = details?.status;
 
-      case "INSTRUMENT_DECLINED":
-        return "Your bank declined this card. Please try another card or contact your bank.";
-
-      case "PAYER_ACTION_REQUIRED":
-        return "Your bank requires additional authentication. Please try again and complete verification.";
-
-      case "TRANSACTION_REFUSED":
-        return "The transaction was refused by the bank.";
-
-      case "CARD_EXPIRED":
-        return "This card has expired. Please use another card.";
-
-      case "INSUFFICIENT_FUNDS":
-        return "This card has insufficient funds.";
-
-      case "INVALID_ACCOUNT":
-        return "The card number appears to be invalid.";
-
-      case "DO_NOT_HONOR":
-        return "Your bank declined the transaction for security reasons.";
-
-      case "FAILED":
-        return "The payment processor could not complete the transaction.";
-
-      default:
-        return "Your payment could not be completed. Please check your card details or try another payment method.";
+    if (status === "DECLINED") {
+      return "Your bank declined the transaction. Please try another card.";
     }
+
+    if (status === "FAILED") {
+      return "The payment processor could not complete this transaction.";
+    }
+
+    if (status === "PAYER_ACTION_REQUIRED") {
+      return "Your bank requires authentication to complete this payment.";
+    }
+
+    return "Payment was not completed. Please verify your details or try another payment method.";
   }
 
   function parsePayPalError(err) {
 
-    console.error("FULL PAYPAL ERROR:", err);
+    console.error("PayPal Error:", err);
 
     let message = "Payment could not be processed.";
 
-    if (err?.details && err.details.length > 0) {
+    if (err && err.details && err.details.length > 0) {
       message = err.details[0].description;
-    }
-
-    else if (err?.message) {
+    } 
+    else if (err && err.message) {
       message = err.message;
     }
-
-    const debug = err?.debug_id
-      ? "<br><br><small>Debug ID: " + err.debug_id + "</small>"
-      : "";
 
     return `
       <strong>Payment Failed</strong><br><br>
@@ -128,10 +100,8 @@
         <li>Expired card</li>
         <li>Insufficient funds</li>
         <li>Bank security verification required</li>
-        <li>Card blocked for online or international payments</li>
       </ul>
       Please verify your details or try another payment method.
-      ${debug}
     `;
   }
 
@@ -158,9 +128,6 @@
     if (checkout) checkout.style.display = "none";
     if (confirm) confirm.classList.add("show");
 
-    const fx = el("fxLayer");
-    if (fx) fx.classList.add("show");
-
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -186,24 +153,23 @@
 
       onApprove: function (data, actions) {
 
-        return actions.order.capture()
-          .then(function (details) {
+        return actions.order.capture().then(function (details) {
 
-            if (!details || details.status !== "COMPLETED") {
+          if (!details || details.status !== "COMPLETED") {
+            const reason = getDeclineReason(details);
+            showError(reason);
+            return;
+          }
 
-              const reason = getDeclineReason(details);
-              showError(reason);
+          paymentCompleted = true;
+          showConfirmation(details);
 
-              return;
-            }
+        }).catch(function (err) {
 
-            paymentCompleted = true;
-            showConfirmation(details);
-          })
+          showError(parsePayPalError(err));
 
-          .catch(function (err) {
-            showError(parsePayPalError(err));
-          });
+        });
+
       },
 
       onError: function (err) {
@@ -237,24 +203,23 @@
 
       onApprove: function (data, actions) {
 
-        return actions.order.capture()
-          .then(function (details) {
+        return actions.order.capture().then(function (details) {
 
-            if (!details || details.status !== "COMPLETED") {
+          if (!details || details.status !== "COMPLETED") {
+            const reason = getDeclineReason(details);
+            showError(reason);
+            return;
+          }
 
-              const reason = getDeclineReason(details);
-              showError(reason);
+          paymentCompleted = true;
+          showConfirmation(details);
 
-              return;
-            }
+        }).catch(function (err) {
 
-            paymentCompleted = true;
-            showConfirmation(details);
-          })
+          showError(parsePayPalError(err));
 
-          .catch(function (err) {
-            showError(parsePayPalError(err));
-          });
+        });
+
       },
 
       onError: function (err) {
