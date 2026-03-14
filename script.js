@@ -1,6 +1,9 @@
 (function () {
+
   const amount = String(window.CHECKOUT_AMOUNT || "1.00");
   const currency = String(window.CHECKOUT_CURRENCY || "USD");
+
+  let paymentCompleted = false;
 
   function el(id) {
     return document.getElementById(id);
@@ -35,6 +38,11 @@
     box.classList.remove("show");
   }
 
+  function safeSet(id, value) {
+    const node = el(id);
+    if (node) node.textContent = value;
+  }
+
   function createOrder(data, actions) {
     return actions.order.create({
       intent: "CAPTURE",
@@ -51,20 +59,27 @@
   }
 
   function showConfirmation(details) {
+
     const capture = details?.purchase_units?.[0]?.payments?.captures?.[0];
     const paidAmount = capture?.amount?.value || amount;
-    const payerName = [details?.payer?.name?.given_name || "", details?.payer?.name?.surname || ""]
-      .join(" ")
-      .trim();
+
+    const payerName = [
+      details?.payer?.name?.given_name || "",
+      details?.payer?.name?.surname || ""
+    ].join(" ").trim();
+
     const payerEmail = details?.payer?.email_address || "";
 
-    el("confirmOrderId").textContent = details?.id || "";
-    el("confirmAmount").textContent = formatAmount(paidAmount);
-    el("confirmName").textContent = payerName || "Completed";
-    el("confirmEmail").textContent = payerEmail || "-";
+    safeSet("confirmOrderId", details?.id || "");
+    safeSet("confirmAmount", formatAmount(paidAmount));
+    safeSet("confirmName", payerName || "Completed");
+    safeSet("confirmEmail", payerEmail || "-");
 
-    el("checkoutView").style.display = "none";
-    el("confirmationView").classList.add("show");
+    const checkout = el("checkoutView");
+    const confirm = el("confirmationView");
+
+    if (checkout) checkout.style.display = "none";
+    if (confirm) confirm.classList.add("show");
 
     const fx = el("fxLayer");
     if (fx) fx.classList.add("show");
@@ -73,49 +88,91 @@
   }
 
   function renderButtons() {
+
     paypal.Buttons({
       fundingSource: paypal.FUNDING.PAYPAL,
+
       style: {
         layout: "vertical",
         shape: "rect",
         label: "paypal"
       },
+
       onClick: function (data, actions) {
         clearError();
         setMethod("PayPal");
         return actions.resolve();
       },
+
       createOrder: createOrder,
+
       onApprove: function (data, actions) {
-        return actions.order.capture().then(showConfirmation);
+
+        return actions.order.capture().then(function (details) {
+
+          if (!details || details.status !== "COMPLETED") {
+            showError("Payment not completed.");
+            return;
+          }
+
+          paymentCompleted = true;
+          showConfirmation(details);
+        });
       },
+
       onError: function (err) {
+
+        if (paymentCompleted) return;
+
         console.error(err);
         showError("PayPal payment could not be completed.");
       }
+
     }).render("#paypal-button-container");
 
-    if (paypal.Buttons({ fundingSource: paypal.FUNDING.CARD }).isEligible()) {
-      paypal.Buttons({
-        fundingSource: paypal.FUNDING.CARD,
-        style: {
-          layout: "vertical",
-          shape: "rect"
-        },
-        onClick: function (data, actions) {
-          clearError();
-          setMethod("Debit / Credit Card");
-          return actions.resolve();
-        },
-        createOrder: createOrder,
-        onApprove: function (data, actions) {
-          return actions.order.capture().then(showConfirmation);
-        },
-        onError: function (err) {
-          console.error(err);
-          showError("Card payment could not be completed.");
-        }
-      }).render("#card-button-container");
+
+    const cardButtons = paypal.Buttons({
+      fundingSource: paypal.FUNDING.CARD,
+
+      style: {
+        layout: "vertical",
+        shape: "rect"
+      },
+
+      onClick: function (data, actions) {
+        clearError();
+        setMethod("Debit / Credit Card");
+        return actions.resolve();
+      },
+
+      createOrder: createOrder,
+
+      onApprove: function (data, actions) {
+
+        return actions.order.capture().then(function (details) {
+
+          if (!details || details.status !== "COMPLETED") {
+            showError("Payment not completed.");
+            return;
+          }
+
+          paymentCompleted = true;
+          showConfirmation(details);
+        });
+      },
+
+      onError: function (err) {
+
+        if (paymentCompleted) return;
+
+        console.error(err);
+        showError("Card payment could not be completed.");
+      }
+
+    });
+
+    if (cardButtons.isEligible()) {
+      cardButtons.render("#card-button-container");
     }
   }
 
@@ -123,4 +180,5 @@
     setAmounts();
     renderButtons();
   });
+
 })();
