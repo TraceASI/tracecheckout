@@ -4,112 +4,214 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trace Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
 
 *{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial;
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+:root{
+  --bg:#0b0e13;
+  --card:#10151c;
+  --hairline:rgba(255,255,255,0.09);
+  --hairline-strong:rgba(255,255,255,0.16);
+  --text:#eceae4;
+  --text-2:#98a0ab;
+  --muted:#5a6370;
+  --violet:#998cd6;
+  --green:#63b391;
+  --gold:#cfae63;
+  --ruby:#c96b77;
+  --sans:'Inter',system-ui,-apple-system,sans-serif;
+  --display:'Space Grotesk','Inter',sans-serif;
 }
 
 body{
-min-height:100vh;
-background: linear-gradient(135deg,#0f172a,#1e293b,#020617);
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
+  min-height:100vh;
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--sans);
+  line-height:1.6;
 }
 
-/* container */
-
 .wrapper{
-width:100%;
-max-width:900px;
-padding:40px 20px;
+  width:100%;
+  max-width:1060px;
+  margin:0 auto;
+  padding:64px 24px 48px;
 }
 
 /* header */
 
 .header{
-text-align:center;
-margin-bottom:40px;
+  text-align:center;
+  margin-bottom:48px;
+}
+
+.header .mark{
+  width:64px;
+  height:64px;
+  margin:0 auto 18px;
+  display:block;
 }
 
 .header h1{
-font-size:40px;
-font-weight:700;
-margin-bottom:10px;
+  font-family:var(--display);
+  font-size:clamp(28px,4vw,40px);
+  font-weight:600;
+  letter-spacing:-0.02em;
+  margin-bottom:8px;
 }
 
 .header p{
-color:#94a3b8;
-font-size:16px;
+  color:var(--text-2);
+  font-size:15px;
 }
+
+/* sections */
+
+.section{
+  margin-bottom:40px;
+}
+
+.section-label{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.22em;
+  text-transform:uppercase;
+  color:var(--text-2);
+  padding-bottom:12px;
+  border-bottom:1px solid var(--hairline);
+  margin-bottom:18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.section-label .dot{
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  display:inline-block;
+}
+
+.section-crypto .dot{ background:var(--violet); }
+.section-stocks .dot{ background:var(--green); }
+.section-mandate .dot{ background:var(--gold); }
+.section-other .dot{ background:var(--muted); }
 
 /* grid */
 
 .grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
+}
+
+.grid-small{
+  grid-template-columns:repeat(auto-fill,minmax(150px,1fr));
 }
 
 /* card */
 
 .card{
-background:rgba(255,255,255,0.05);
-border:1px solid rgba(255,255,255,0.08);
-border-radius:14px;
-padding:25px;
-text-align:center;
-transition:all .25s ease;
-backdrop-filter: blur(8px);
+  background:var(--card);
+  border:1px solid var(--hairline);
+  padding:24px 22px;
+  text-align:left;
+  transition:border-color .2s ease, transform .2s ease;
 }
 
 .card:hover{
-transform:translateY(-6px);
-background:rgba(255,255,255,0.08);
-border-color:#3b82f6;
-box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  transform:translateY(-3px);
+  border-color:var(--hairline-strong);
 }
 
-/* price */
+.section-crypto .card:hover{ border-color:var(--violet); }
+.section-stocks .card:hover{ border-color:var(--green); }
+.section-mandate .card:hover{ border-color:var(--gold); }
+
+.tier{
+  font-size:11px;
+  font-weight:600;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+  color:var(--text-2);
+  margin-bottom:10px;
+}
+
+.section-crypto .tier{ color:var(--violet); }
+.section-stocks .tier{ color:var(--green); }
+.section-mandate .tier{ color:var(--gold); }
 
 .price{
-font-size:30px;
-font-weight:700;
-margin-bottom:15px;
+  font-family:var(--display);
+  font-size:30px;
+  font-weight:600;
+  letter-spacing:-0.02em;
+  margin-bottom:4px;
+}
+
+.per{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:18px;
 }
 
 /* button */
 
 .button{
-display:inline-block;
-padding:12px 20px;
-background:linear-gradient(135deg,#3b82f6,#2563eb);
-border-radius:8px;
-text-decoration:none;
-color:white;
-font-weight:600;
-font-size:15px;
-transition:all .2s ease;
+  display:block;
+  text-align:center;
+  padding:11px 18px;
+  background:transparent;
+  border:1px solid var(--hairline-strong);
+  text-decoration:none;
+  color:var(--text);
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
+  transition:all .2s ease;
 }
 
 .button:hover{
-transform:scale(1.05);
-box-shadow:0 6px 20px rgba(37,99,235,0.6);
+  background:var(--text);
+  border-color:var(--text);
+  color:var(--bg);
+}
+
+/* small cards (other amounts) */
+
+.grid-small .card{
+  padding:18px 16px;
+}
+
+.grid-small .price{
+  font-size:22px;
+  margin-bottom:14px;
+}
+
+.grid-small .button{
+  padding:9px 12px;
+  font-size:11px;
 }
 
 /* footer */
 
 .footer{
-text-align:center;
-margin-top:40px;
-font-size:14px;
-color:#64748b;
+  text-align:center;
+  margin-top:48px;
+  padding-top:24px;
+  border-top:1px solid var(--hairline);
+  font-size:13px;
+  color:var(--muted);
 }
 
 </style>
@@ -120,11 +222,113 @@ color:#64748b;
 <div class="wrapper">
 
 <div class="header">
+<svg class="mark" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="chrome" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.32" stop-color="#eaeaee"/>
+      <stop offset="0.52" stop-color="#a7a7af"/>
+      <stop offset="0.72" stop-color="#dedee2"/>
+      <stop offset="1" stop-color="#8f8f97"/>
+    </linearGradient>
+    <linearGradient id="chromeRing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f4f4f7"/>
+      <stop offset="0.45" stop-color="#c9c9cf"/>
+      <stop offset="0.6" stop-color="#9a9aa2"/>
+      <stop offset="1" stop-color="#e6e6ea"/>
+    </linearGradient>
+  </defs>
+  <circle cx="256" cy="256" r="196" fill="none" stroke="url(#chromeRing)" stroke-width="26"/>
+  <path d="M146 154 h220 v65 h-80 v143 h-60 V219 h-80 z" fill="url(#chrome)"/>
+</svg>
 <h1>Trace Checkout</h1>
 <p>Select a payment option below</p>
 </div>
 
+<!-- Crypto -->
+<div class="section section-crypto">
+<div class="section-label"><span class="dot"></span>Equities &amp; Crypto Information Desk</div>
 <div class="grid">
+
+<div class="card">
+<div class="tier">Standard</div>
+<div class="price">$3,000</div>
+<div class="per">per year</div>
+<a class="button" href="sehk.html" target="_blank">Open Payment</a>
+</div>
+
+<div class="card">
+<div class="tier">Gold</div>
+<div class="price">$10,000</div>
+<div class="per">per year</div>
+<a class="button" href="dahk.html" target="_blank">Open Payment</a>
+</div>
+
+<div class="card">
+<div class="tier">Ruby Lifetime</div>
+<div class="price">$20,000</div>
+<div class="per">one payment</div>
+<a class="button" href="bistk.html" target="_blank">Open Payment</a>
+</div>
+
+</div>
+</div>
+
+<!-- Stocks -->
+<div class="section section-stocks">
+<div class="section-label"><span class="dot"></span>Stocks Package</div>
+<div class="grid">
+
+<div class="card">
+<div class="tier">Annual</div>
+<div class="price">$2,000</div>
+<div class="per">per year</div>
+<a class="button" href="tuhk.html" target="_blank">Open Payment</a>
+</div>
+
+<div class="card">
+<div class="tier">Gold</div>
+<div class="price">$4,000</div>
+<div class="per">per year</div>
+<a class="button" href="chork.html" target="_blank">Open Payment</a>
+</div>
+
+<div class="card">
+<div class="tier">Lifetime</div>
+<div class="price">$6,000</div>
+<div class="per">one payment</div>
+<a class="button" href="shashk.html" target="_blank">Open Payment</a>
+</div>
+
+</div>
+</div>
+
+<!-- Mandate -->
+<div class="section section-mandate">
+<div class="section-label"><span class="dot"></span>The Mandate</div>
+<div class="grid">
+
+<div class="card">
+<div class="tier">One Year</div>
+<div class="price">$25,000</div>
+<div class="per">one payment · 12-month term</div>
+<a class="button" href="bistopanjk.html" target="_blank">Open Payment</a>
+</div>
+
+<div class="card">
+<div class="tier">Lifetime</div>
+<div class="price">$50,000</div>
+<div class="per">one payment</div>
+<a class="button" href="panjahk.html" target="_blank">Open Payment</a>
+</div>
+
+</div>
+</div>
+
+<!-- Other amounts -->
+<div class="section section-other">
+<div class="section-label"><span class="dot"></span>Other Amounts</div>
+<div class="grid grid-small">
 
 <div class="card">
 <div class="price">$5,995</div>
@@ -171,6 +375,7 @@ color:#64748b;
 <a class="button" href="yak.html" target="_blank">Open Payment</a>
 </div>
 
+</div>
 </div>
 
 <div class="footer">

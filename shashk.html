@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TraceASI Secure Checkout</title>
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    window.CHECKOUT_AMOUNT = "6000.00";
+    window.CHECKOUT_CURRENCY = "USD";
+  </script>
+  <script src="https://www.paypal.com/sdk/js?client-id=AXfLPhPKmmPqeBVLUIv2k-4A5gdYrDGxEDiXAdYo6E0jSApDGITFRwTdT2reizmYMrOzIFooASpgM0GE&currency=USD&intent=capture&components=buttons"></script>
+</head>
+<body>
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">TA</div>
+      <div>
+        <h1>TraceASI Secure Checkout</h1>
+        <p>Complete your payment securely</p>
+      </div>
+    </div>
+
+    <div id="checkoutView" class="grid">
+      <div>
+        <div class="card">
+          <h2 class="choice-heading">Choose payment method</h2>
+          <p class="choice-subtext">Click PayPal or Debit / Credit Card below to continue.</p>
+
+          <div id="formError" class="error"></div>
+
+          <div id="paypal-button-container"></div>
+          <div class="spacer-10"></div>
+          <div id="card-button-container"></div>
+
+          <p class="mini-note">
+            Card and PayPal payments are securely handled by PayPal.
+          </p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="amount-box">
+          <div class="small">Amount due</div>
+          <div class="amount" data-amount>$1.00</div>
+        </div>
+
+        <h2 class="section-title">Order summary</h2>
+        <div class="summary-list">
+          <div class="summary-row">
+            <span>Brand</span>
+            <strong>TraceASI</strong>
+          </div>
+          <div class="summary-row">
+            <span>Payment method</span>
+            <strong id="selectedMethod">PayPal / Card</strong>
+          </div>
+          <div class="summary-row">
+            <span>Currency</span>
+            <strong>USD</strong>
+          </div>
+          <div class="summary-row total-row">
+            <span>Total</span>
+            <strong data-amount>$1.00</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="confirmationView" class="confirmation-screen">
+      <div class="success-stars">
+        <span class="success-star" style="top:8%;left:10%;animation-delay:.2s;"></span>
+        <span class="success-star" style="top:14%;left:28%;animation-delay:1.1s;"></span>
+        <span class="success-star" style="top:12%;left:72%;animation-delay:.8s;"></span>
+        <span class="success-star" style="top:20%;left:85%;animation-delay:2s;"></span>
+        <span class="success-star" style="top:34%;left:18%;animation-delay:1.4s;"></span>
+        <span class="success-star" style="top:46%;left:76%;animation-delay:.6s;"></span>
+        <span class="success-star" style="top:58%;left:8%;animation-delay:2.4s;"></span>
+        <span class="success-star" style="top:66%;left:62%;animation-delay:1.7s;"></span>
+        <span class="success-star" style="top:82%;left:26%;animation-delay:.5s;"></span>
+        <span class="success-star" style="top:78%;left:88%;animation-delay:2.2s;"></span>
+        <span class="success-star" style="top:26%;left:6%;animation-delay:.9s;"></span>
+        <span class="success-star" style="top:31%;left:43%;animation-delay:1.6s;"></span>
+        <span class="success-star" style="top:54%;left:90%;animation-delay:2.1s;"></span>
+        <span class="success-star" style="top:71%;left:14%;animation-delay:1.2s;"></span>
+        <span class="success-star" style="top:86%;left:74%;animation-delay:2.7s;"></span>
+        <span class="success-star" style="top:18%;left:56%;animation-delay:1.8s;"></span>
+        <span class="success-shooting-star one"></span>
+        <span class="success-shooting-star two"></span>
+        <span class="success-shooting-star three"></span>
+      </div>
+
+      <div class="success-content">
+        <h1>Welcome to CRYPTOPIA.</h1>
+        <p>Congratulations! Your payment has been received.</p>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
