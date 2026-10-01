@@ -243,16 +243,6 @@ body {
   text-align: center;
 }
 
-.success-eyebrow {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  color: #5a6370;
-  margin-bottom: 14px;
-  animation: obsFadeup 0.7s 0.25s both;
-}
-
 .success-title {
   font-family: 'Space Grotesk', 'Inter', sans-serif;
   font-size: 30px;
@@ -263,7 +253,7 @@ body {
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  animation: obsFadeup 0.7s 0.4s both;
+  animation: obsFadeup 0.7s 0.25s both;
 }
 
 .success-receipt {
@@ -275,7 +265,7 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.13);
   padding: 9px 20px;
   margin-bottom: 8px;
-  animation: obsFadeup 0.7s 0.55s both;
+  animation: obsFadeup 0.7s 0.4s both;
 }
 .success-receipt b { color: #eceae4; font-weight: 600; }
 
@@ -285,7 +275,7 @@ body {
   letter-spacing: 0.08em;
   color: #424b57;
   margin-bottom: 24px;
-  animation: obsFadeup 0.7s 0.65s both;
+  animation: obsFadeup 0.7s 0.5s both;
 }
 
 .success-note {
@@ -294,7 +284,7 @@ body {
   line-height: 1.75;
   max-width: 340px;
   margin: 0 auto 28px;
-  animation: obsFadeup 0.7s 0.75s both;
+  animation: obsFadeup 0.7s 0.6s both;
 }
 
 .success-btn {
@@ -308,11 +298,38 @@ body {
   letter-spacing: 0.2em;
   text-transform: uppercase;
   transition: background 0.25s, color 0.25s;
-  animation: obsFadeup 0.7s 0.9s both;
+  animation: obsFadeup 0.7s 0.75s both;
 }
 .success-btn:hover {
   background: #eceae4;
   color: #0a0d12;
+}
+
+
+/* night sky on the backdrop */
+.night-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.night-star {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.7);
+  animation: obsTwinkle 4s infinite ease-in-out;
+}
+
+.night-star.s1 { width: 1.5px; height: 1.5px; }
+.night-star.s3 { width: 2.5px; height: 2.5px; box-shadow: 0 0 9px rgba(255, 255, 255, 0.85); }
+
+@keyframes obsTwinkle {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.95; }
 }
 
 @keyframes obsFadeup {
