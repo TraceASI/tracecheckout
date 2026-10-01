@@ -92,6 +92,19 @@
     if (cardButtons.isEligible()) cardButtons.render("#card-button-container");
   }
 
-  document.addEventListener("DOMContentLoaded", () => { setAmounts(); renderButtons(); });
+  document.addEventListener("DOMContentLoaded", () => {
+    setAmounts();
+
+    // Preview the confirmation screen without paying: append ?preview to the URL
+    if (new URLSearchParams(window.location.search).has("preview")) {
+      const checkout = el("checkoutView");
+      const confirm = el("confirmationView");
+      if (checkout) checkout.style.display = "none";
+      if (confirm) confirm.classList.add("show");
+      return;
+    }
+
+    renderButtons();
+  });
 
 })();
