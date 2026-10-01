@@ -68,31 +68,40 @@
     </div>
 
     <div id="confirmationView" class="confirmation-screen">
-      <div class="success-stars">
-        <span class="success-star" style="top:8%;left:10%;animation-delay:.2s;"></span>
-        <span class="success-star" style="top:14%;left:28%;animation-delay:1.1s;"></span>
-        <span class="success-star" style="top:12%;left:72%;animation-delay:.8s;"></span>
-        <span class="success-star" style="top:20%;left:85%;animation-delay:2s;"></span>
-        <span class="success-star" style="top:34%;left:18%;animation-delay:1.4s;"></span>
-        <span class="success-star" style="top:46%;left:76%;animation-delay:.6s;"></span>
-        <span class="success-star" style="top:58%;left:8%;animation-delay:2.4s;"></span>
-        <span class="success-star" style="top:66%;left:62%;animation-delay:1.7s;"></span>
-        <span class="success-star" style="top:82%;left:26%;animation-delay:.5s;"></span>
-        <span class="success-star" style="top:78%;left:88%;animation-delay:2.2s;"></span>
-        <span class="success-star" style="top:26%;left:6%;animation-delay:.9s;"></span>
-        <span class="success-star" style="top:31%;left:43%;animation-delay:1.6s;"></span>
-        <span class="success-star" style="top:54%;left:90%;animation-delay:2.1s;"></span>
-        <span class="success-star" style="top:71%;left:14%;animation-delay:1.2s;"></span>
-        <span class="success-star" style="top:86%;left:74%;animation-delay:2.7s;"></span>
-        <span class="success-star" style="top:18%;left:56%;animation-delay:1.8s;"></span>
-        <span class="success-shooting-star one"></span>
-        <span class="success-shooting-star two"></span>
-        <span class="success-shooting-star three"></span>
-      </div>
-
-      <div class="success-content">
-        <h1>Welcome to CRYPTOPIA.</h1>
-        <p>Congratulations! Your payment has been received.</p>
+      <div class="success-card">
+        <div class="success-hero">
+          <span class="aurora-layer one"></span>
+          <span class="aurora-layer two"></span>
+          <span class="aurora-layer three"></span>
+          <span class="success-star" style="top:14%;left:12%;animation-delay:.2s;"></span>
+          <span class="success-star" style="top:24%;left:80%;animation-delay:1.1s;"></span>
+          <span class="success-star" style="top:9%;left:52%;animation-delay:.8s;"></span>
+          <span class="success-star" style="top:36%;left:28%;animation-delay:1.6s;"></span>
+          <span class="success-star" style="top:30%;left:66%;animation-delay:2.2s;"></span>
+          <span class="success-star" style="top:16%;left:90%;animation-delay:1.4s;"></span>
+          <svg class="success-mark" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <linearGradient id="smChrome" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#ffffff"/>
+                <stop offset="0.32" stop-color="#eaeaee"/>
+                <stop offset="0.52" stop-color="#a7a7af"/>
+                <stop offset="0.72" stop-color="#dedee2"/>
+                <stop offset="1" stop-color="#8f8f97"/>
+              </linearGradient>
+            </defs>
+            <circle cx="256" cy="256" r="196" fill="none" stroke="url(#smChrome)" stroke-width="26"/>
+            <path d="M146 154 h220 v65 h-80 v143 h-60 V219 h-80 z" fill="url(#smChrome)"/>
+          </svg>
+        </div>
+        <div class="success-panel">
+          <div class="success-title"><span class="success-check">&#10003;</span>Payment Successful</div>
+          <div class="success-meta">Trace AI&ensp;|&ensp;<span id="confirmAmount" data-amount>$0.00</span>&ensp;|&ensp;Payment received</div>
+          <p class="success-welcome">Welcome to Trace AI.</p>
+          <p class="success-note">Check your inbox for your receipt and access details.</p>
+          <div class="success-actions">
+            <a class="success-btn" href="https://www.traceasi.com" target="_blank" rel="noopener">Got it</a>
+          </div>
+        </div>
       </div>
     </div>
 
